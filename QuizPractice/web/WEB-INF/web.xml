@@ -97,8 +97,8 @@
         <servlet-class>controller.ControllerAdminQuizUpdate</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ManagerQuestion</servlet-name>
-        <servlet-class>controller.ManagerQuestion</servlet-class>
+        <servlet-name>ControllerAdminQuestion</servlet-name>
+        <servlet-class>controller.ControllerAdminQuestion</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>addQuestionController</servlet-name>
@@ -273,8 +273,8 @@
         <url-pattern>/admin/quiz/update</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ManagerQuestion</servlet-name>
-        <url-pattern>/ManagerQuestion</url-pattern>
+        <servlet-name>ControllerAdminQuestion</servlet-name>
+        <url-pattern>/admin/question</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addQuestionController</servlet-name>
