@@ -53,7 +53,7 @@ public class FilterQuestionByQuizIdController extends HttpServlet {
             QuizDAO dao = new QuizDAO();
             QuestionDAO daoQuestion = new QuestionDAO();
 
-            ArrayList<Quiz> list = dao.getAllQuiz();
+            ArrayList<Quiz> list = dao.getAll();
             ArrayList<Question> listQuestion = daoQuestion.getAllQuestionsByQuizId(id);
 
             session.setAttribute("status", "filter");

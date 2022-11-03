@@ -7,10 +7,8 @@ package controller;
 
 import dao.QuestionDAO;
 import dao.QuizDAO;
-import dao.QuizLevelDAO;
 import dao.SubjectDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -19,7 +17,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import model.*;
 
 /**
@@ -43,11 +40,8 @@ public class UpdateQuizExpertController extends HttpServlet {
         QuizDAO quizDao = new QuizDAO();
         QuestionDAO questionDao = new QuestionDAO();
         SubjectDAO subjectDao = new SubjectDAO();
-        QuizLevelDAO quizlevel = new QuizLevelDAO();
         ArrayList<Subject> listS = subjectDao.getAllSubjcet();
-        ArrayList<QuizLevel> listL = quizlevel.getAllQuizLevel();
         request.setAttribute("listSubject", listS);
-        request.setAttribute("listQuizLevel", listL);
         String quizId = request.getParameter("quizId");
         Quiz quiz = quizDao.getQuizByID(quizId);
         ArrayList<Question> listQuestion = new ArrayList<>();
@@ -73,30 +67,15 @@ public class UpdateQuizExpertController extends HttpServlet {
             throws ServletException, IOException {
         String quizName = request.getParameter("quizName");
         int subjectId = Integer.parseInt(request.getParameter("subject"));
-        int quizLevelId = Integer.parseInt(request.getParameter("level"));
         int hour = Integer.parseInt(request.getParameter("hour"));
         int minus = Integer.parseInt(request.getParameter("minus"));
         int second = Integer.parseInt(request.getParameter("second"));
         Time quizDuration = new Time(hour, minus, second);
         String description = request.getParameter("description");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(System.currentTimeMillis());
         int quizId = Integer.parseInt(request.getParameter("quizId"));
-
         QuizDAO quizDao = new QuizDAO();
-        quizDao.updateQuiz(quizId, quizName, quizDuration, subjectId, quizLevelId, description, date);
+        quizDao.updateQuiz(quizId, quizName, quizDuration, subjectId, description);
         response.sendRedirect("QuizListExpertController");
-
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

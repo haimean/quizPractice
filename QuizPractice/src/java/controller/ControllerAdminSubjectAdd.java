@@ -7,18 +7,22 @@ package controller;
 
 import dao.SubjectDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.nio.file.Paths;
+import logic.SaveImage;
 import model.Subject;
 
 /**
  *
  * @author DELL
  */
-public class AdminAddSubjectController extends HttpServlet {
+@MultipartConfig
+public class ControllerAdminSubjectAdd extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -32,7 +36,7 @@ public class AdminAddSubjectController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/adminAddNewSubject.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/subject/adminSubjectAdd.jsp").forward(request, response);
     }
 
     /**
@@ -48,36 +52,32 @@ public class AdminAddSubjectController extends HttpServlet {
             throws ServletException, IOException {
         SubjectDAO subjectDao = new SubjectDAO();
         boolean checkName = true;
-        String nameSubject = request.getParameter("name");
+        String nameSubject = request.getParameter("name").trim();
+        Part part = request.getPart("image");
+        String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+        String description = request.getParameter("description");
+        Subject subject = new Subject(nameSubject, description, filename);
         for (Subject s : subjectDao.getAllSubjcet()) {
             if (s.getSubjectName().equals(nameSubject)) {
                 checkName = false;
             }
         }
         if (checkName) {
-            String image = request.getParameter("image");
-            String description = request.getParameter("description");
-
-            Subject subject = new Subject(nameSubject, description, image);
-            subjectDao.setNewSubject(subject);
-            request.getRequestDispatcher("AdminSubjectController").forward(request, response);
+            if (subjectDao.add(subject)) {
+                try {
+                    SaveImage saveiamge = new SaveImage();
+                    saveiamge.saveiMage(part, filename);
+                    response.sendRedirect(request.getContextPath() + "/admin/subject");
+                } catch (IOException e) {
+                }
+            }
         } else {
-            request.setAttribute("mess", "Quiz name is exist");
+            request.setAttribute("mess", "Subjeect faild!");
             request.setAttribute("check", false);
-            request.getRequestDispatcher("view/adminAddNewSubject.jsp").forward(request, response);
-
+            request.setAttribute("name", nameSubject);
+            request.setAttribute("description", description);
+            request.setAttribute("subjects", nameSubject);
+            request.getRequestDispatcher("/view/admin/subject/adminSubjectAdd.jsp").forward(request, response);
         }
-
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

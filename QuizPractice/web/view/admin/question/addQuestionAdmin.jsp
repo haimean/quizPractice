@@ -261,7 +261,7 @@
             <div id="editEmployeeModal">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form action="AdminAddQuestion" method="post">
+                        <form action="AdminAddQuestion" method="post" >
                             <div class="modal-body">
                                 <div style="height: 40px;margin-bottom: 10px">
                                     <label style="font-size: 24px">Quiz: </label>

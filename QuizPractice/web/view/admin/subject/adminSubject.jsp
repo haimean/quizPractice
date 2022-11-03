@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page import="java.io.File" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -28,37 +29,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminSubject.css" />
     </head>
     <body>
-        <div class="sidebar">
-            <div class="sidebar-brand">
-                <h2><span class="las la-accusoft"></span>Admin Page</h2>
-            </div>
-
-            <div class="sidebar-menu">
-                <ul>
-                    <li>
-                        <a href="admin.html" 
-                           ><i class="fas fa-user-circle"></i> <span>User</span></a
-                        >
-                    </li>
-                    <li>
-                        <a href="admin_course.html"
-                           ><i class="fas fa-book-open"></i><span>Quiz</span></a
-                        >
-                    </li>
-                    <li>
-                        <a href="#"
-                           ><i class="fas fa-graduation-cap"></i><span>Expert</span></a
-                        >
-                    </li>
-                    <li>
-                        <a href="AdminSubjectController" class="active"
-                           ><i class="fas fa-laptop"></i>
-                            <span>Subject</span></a
-                        >
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <%@include file="/view/admin/layout.jsp" %>
         <div class="main-content">
             <header>
                 <h2>
@@ -89,7 +60,7 @@
                 <div class="container">
                     <div class="row justify-content-between subject-section">
                         <h2 class="mt-3">Subject Management</h2>
-                        <a href="AdminAddSubjectController" style="height:30px !important;margin-right: 20px;margin-top: 10px " class="btn btn-primary btn-sm float-right">Add subject</a>
+                        <a href="subject/add" style="height:30px !important;margin-right: 20px;margin-top: 10px " class="btn btn-primary btn-sm float-right">Add subject</a>
                     </div>
 
                     <table class="table table-bordered">
@@ -106,11 +77,11 @@
                             <c:forEach items="${adminSubject}" var="as">
                                 <tr>               
                                     <td>${as.subjectName}</td>
-                                    <!--<td><img src="${pageContext.request.contextPath}/view/img/${as.image}"></td>-->
-                                    <td>${pageContext.request.contextPath}/view/img/${as.image}</td>
+                                    <td><img src="${as.image}" alt="${as.subjectName}"width="200"/>
+                                    </td>
                                     <td>${as.description}</td>
-                                    <td><button type="button" class="btn btn-primary">Delete</button></td>
-                                    <td><a href="" class="btn btn-primary">Update</a></td>                                 
+                                    <td><a href="<%= request.getContextPath() %>/admin/subject/delete?id=${as.subjectId}" class="btn btn-danger">Delete</a></td>
+                                    <td><a href="<%= request.getContextPath() %>/admin/subject/update?id=${as.subjectId}" class="btn btn-warning">Update</a></td>                                                       
                                 </tr>
                             </c:forEach>
                         </tbody>

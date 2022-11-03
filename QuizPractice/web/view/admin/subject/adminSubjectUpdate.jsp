@@ -24,29 +24,7 @@
     </head>
 
     <body>
-        <div class="sidebar">
-            <div class="sidebar-brand">
-                <h2><span class="las la-accusoft"></span>Admin Page</h2>
-            </div>
-
-            <div class="sidebar-menu">
-                <ul>
-                    <li>
-                        <a href="admin.html"><i class="fas fa-user-circle"></i> <span>User</span></a>
-                    </li>
-                    <li>
-                        <a href="admin_course.html"><i class="fas fa-book-open"></i><span>Quiz</span></a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fas fa-graduation-cap"></i><span>Expert</span></a>
-                    </li>
-                    <li>
-                        <a href="AdminSubjectController" class="active"><i class="fas fa-laptop"></i>
-                            <span>Subject</span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <%@include file="/view/admin/layout.jsp" %>
         <div class="main-content">
             <header>
                 <h2>
@@ -74,22 +52,23 @@
                     <div class="row justify-content-between subject-section">
                         <h2 class="mt-3">Subject Management</h2>
                     </div>
-                    <form action="AdminAddSubjectController" method="post">
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <input name = "id" value="${id}" hidden="">
                         <div class="mainSection">
                             <div class="firstSection">
                                 <div class="subjectNameContet" style="margin-top:20px">
                                     Subject name section
                                     <label for="subjectName">Subject Name</label>
-                                    <input type="text" name="name" id="subjectName" placeholder="Please input your subject name here.">
+                                    <input type="text" name="name" id="subjectName" value="${name}" placeholder="Please input your subject name here.">
                                     <c:if test="${check eq false}">
                                         <label style="color: red;" for="subjectName">${mess}</label>
-
                                     </c:if>
                                 </div>
                             </div>
                             <div class="secondSection">
                                 <div class="imageSection">
-                                    <input name="image" type="file">
+                                    <img src="${image}" alt="alt"/>
+                                    <input name="image" type="file" >
                                 </div>
                             </div>
                         </div>
@@ -97,13 +76,13 @@
                             <label for="descriptionSection">Description:</label><br>
 
                             <textarea id="descriptionSection" name="description" rows="6" cols="135">
-                    
+                                ${description}
                             </textarea>
                         </div>
 
                         <div class="buttonSection">
-                            <button type="submit">Submit</button>
-                            <button type="button">Cancel</button>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                            <button class="btn btn-secondary" type="reset">Reset</button>
                         </div>
                     </form>
 

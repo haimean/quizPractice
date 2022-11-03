@@ -6,17 +6,14 @@
 package controller;
 
 import dao.QuizDAO;
-import dao.QuizLevelDAO;
 import dao.SubjectDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Quiz;
-import model.QuizLevel;
 import model.Subject;
 
 /**
@@ -46,21 +43,18 @@ public class SearchQuizController extends HttpServlet {
         
         QuizDAO quizDao = new QuizDAO();
         SubjectDAO subjectDao = new SubjectDAO();
-        QuizLevelDAO quizlevelDao = new QuizLevelDAO();
         String search = request.getParameter("search") ;
         
-        ArrayList<Quiz> list = quizDao.getQuizByQuizName(index, search);
+//        ArrayList<Quiz> list = quizDao.getQuizByQuizName(index, search);
         ArrayList<Subject> listS = subjectDao.getAllSubjcet();
-        ArrayList<QuizLevel> listL = quizlevelDao.getAllQuizLevel();
         
         //số lượng trang
-        int numberPage = quizDao.numberOfPages();
+//        int numberPage = quizDao.numberOfPages();
                 
         request.setAttribute("searchQuiz", true);
-        request.setAttribute("numberP", numberPage);
-        request.setAttribute("lisQuiz", list);
+//        request.setAttribute("numberP", numberPage);
+//        request.setAttribute("lisQuiz", list);
         request.setAttribute("listSubject", listS);
-        request.setAttribute("quizLevel", listL);
         request.setAttribute("tagP", index);
         request.getRequestDispatcher("view/quizList.jsp").forward(request, response);
     }

@@ -7,20 +7,18 @@ package controller;
 
 import dao.OptionDAO;
 import dao.QuestionDAO;
-import dao.QuizDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author nguye
  */
-public class UpdateQuestionController extends HttpServlet {
+public class ControllerAdminQuestionAdd extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,43 +34,41 @@ public class UpdateQuestionController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        QuestionDAO question = new QuestionDAO();
+        QuestionDAO q = new QuestionDAO();
         OptionDAO op = new OptionDAO();
 
-        String nameQuesttion = request.getParameter("nameQuestion");
+        String Id = request.getParameter("quizID");
+        int QuizID = Integer.parseInt(Id);
+        String nameQuestion = request.getParameter("nameQ");
         String explanation = request.getParameter("exp");
-        String media = request.getParameter("media");
-        String oldMedia = request.getParameter("mediaa");
+        String img = request.getParameter("img");
+        if(img.length() != 0){
+            img = request.getParameter("img");
+        }else{
+            img = null;
+        }
 
-        String[] option = {request.getParameter("option1"), request.getParameter("option2"), request.getParameter("option3"),
-            request.getParameter("option4")};
+        q.addNewQuestion(QuizID, nameQuestion, img, explanation);
+        int questionId = q.getLastIdQuestion();
 
-        String correctAnswer = request.getParameter("correctA");
+        String[] option = {request.getParameter("op1"), request.getParameter("op2"), request.getParameter("op3"),
+            request.getParameter("op4")};
+        String correctAnswer = request.getParameter("ca");
         int selectCorrectAnswer = Integer.parseInt(correctAnswer);
+        boolean a = false;
 
-        HttpSession session = request.getSession();
-        String opId = session.getAttribute("opId").toString();
-        String questionId = session.getAttribute("questionId").toString();
-        int opIdd = Integer.parseInt(opId);
-
-        if (media.length() == 0 && oldMedia.length() == 0) {
-            question.updateQuestion(questionId, nameQuesttion, null, explanation);
-        } else if (media.length() == 0) {
-            question.updateQuestion(questionId, nameQuesttion, oldMedia, explanation);
-        } else {
-            question.updateQuestion(questionId, nameQuesttion, media, explanation);
-        }
-
-        for (int i = 0; i <= option.length - 1; i++) {
+        for (int i = 0; i < option.length; i++) {
             if (i == (selectCorrectAnswer - 1)) {
-                op.updateOption(questionId, opIdd, option[i], "True");
+                op.addNewOption(questionId, option[i], "True");
             } else {
-                op.updateOption(questionId, opIdd, option[i], "False");
+                op.addNewOption(questionId, option[i], "False");
             }
-            opIdd++;
         }
 
-        response.sendRedirect("ManagerQuestion");
+       
+        int numberQ = q.getTotalQuestion(Id);
+        q.updateNumberQuestion(numberQ, Id);
+        response.sendRedirect("ManagermentQuestion");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

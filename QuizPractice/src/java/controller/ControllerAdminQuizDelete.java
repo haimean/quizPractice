@@ -11,20 +11,18 @@ import dao.QuizDAO;
 import dao.QuizResultDAO;
 import dao.StudentWorkDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Question;
-import model.StudentWork;
 
 /**
  *
  * @author DELL
  */
-public class DeleteQuizController extends HttpServlet {
+public class ControllerAdminQuizDelete extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -47,42 +45,19 @@ public class DeleteQuizController extends HttpServlet {
         int quizId = Integer.parseInt(request.getParameter("quizId"));
 
         ArrayList<Question> listQuestion = questionDao.getListQuestion(quizId);
+        try {
+            for (Question question : listQuestion) {
+                studentWorkDao.deleteStudentWorkByQuestionId(question.getQuestionId());
+                optionDao.deleteOptionByQuestionId(question.getQuestionId());
+                questionDao.deleteQuestionByQuestionId(quizId);
+            }
+            quizResultDao.deleteQuizResultByQuizId(quizId);
+            response.sendRedirect(request.getContextPath() + "/admin/quiz");
 
-        for (Question question : listQuestion) {
-             studentWorkDao.deleteStudentWorkByQuestionId(question.getQuestionId());
-             optionDao.deleteOptionByQuestionId(question.getQuestionId());
-             questionDao.deleteQuestionByQuestionId(quizId);
+            quizDao.delete(quizId);
+        } catch (IOException e) {
+            response.sendRedirect(request.getContextPath() + "/admin/quiz");
         }
-        quizResultDao.deleteQuizResultByQuizId(quizId);
-
-        
-        quizDao.deleteQuizByQuizId(quizId);
-        request.getRequestDispatcher("QuizListExpertController").forward(request, response);
-
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

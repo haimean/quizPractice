@@ -13,7 +13,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Admin Page</title>
+        <title>Add Quiz</title>
         <link rel="stylesheet"
               href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -24,38 +24,7 @@
     </head>
 
     <body>
-        <div class="sidebar">
-            <div class="form-input" style="float: left; margin: 20px 10px; width: 10%;">
-                <a href="home"><span><i class="fa fa-arrow-circle-o-left" style="font-size: 25px; color: white;"></i></span><a
-                        href=""></a>
-            </div>
-            <div class="sidebar-brand" style="float: right; margin: 0px; width: 80%; padding-left: 0;">
-                <div class="user-wrapper">
-                    <img src="../img/${sessionScope.user.avatar}"
-                         width="40px" height="40px" alt="Error" />
-                    <div>
-                        <h4 style="font-size: 20px;">${sessionScope.user.userName}</h4>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-menu">
-                <ul>
-                    <li>
-                        <a href="managementUser" ><i class="fas fa-user-circle"></i><span>Manage User</span></a>
-                    </li><br>
-                    <li>
-                        <a href="AdminQuizController"class="active"><i class="fas fa-book-open"></i><span>Manage Quiz</span></a>
-                    </li><br>
-                    <li>
-                        <a href="ManagermentQuestion"><i class="fas fa-question"></i><span>Manage Question</span></a>
-                    </li><br>
-                    <li>
-                        <a href=""><i class="fas fa-book-open"></i><span>Manage Subject</span></a>
-                    </li><br>
-                </ul>
-            </div>
-        </div>
+        <%@include file="/view/admin/layout.jsp" %>
         <div class="main-content">
             <header>
                 <h2>
@@ -83,42 +52,33 @@
                     <div class="row justify-content-between subject-section">
                         <h2 class="mt-3">Add Quiz</h2>
                     </div>
-                    <form action="AdminAddQuizController" method="post">
+                    <form action="" method="post">
                         <div class="mainSection">
                             <div class="firstSection">
                                 <div class="subjectNameContet">
                                     <!--Subject name section-->
                                     <label for="subjectName">Quiz Name</label>
-                                    <input type="text" name="quizName" id="quizName" placeholder="Please input your quiz name here.">
+                                    <input type="text" name="name" id="name" placeholder="Please input your quiz name here.">
                                     <c:if test="${check eq false}">
                                         <label style="color: red;" for="subjectName">${mess}</label>
-
                                     </c:if>
                                 </div>
                                 <!--end of subject section-->
+
                                 <!--Category section-->
                                 <div class="subjectContent">
                                     <label for="Subject">Subject</label>
-                                    <select name="subject" id="subject">
-                                        <c:forEach items="${listSubject}" var="ls">
-                                            <option name ="subjectChoose" value="${ls.subjectId}" >${ls.subjectName}</option>
-                                        </c:forEach>
-
-                                    </select>
-                                </div>
-                                <div class="levelContent">
-                                    <label for="level">Level</label>
-                                    <select name="level" id="level">
-                                        <c:forEach items="${listQuizLevel}" var="ll">
-                                            <option name="quizLevelChoose" value="${ll.quizLevelId}" >${ll.quizLevelName}</option>
+                                    <select name="subjectId" id="subject">
+                                        <c:forEach items="${subjects}" var="subject">
+                                            <option name ="subjectChoose" value="${subject.subjectId}" >${subject.subjectName}</option>
                                         </c:forEach>
                                     </select>
                                 </div>
                                 <div class="quizDurationContent">
                                     <label for="quizDuration">Quiz Duration</label>
-                                    <input name="hour" type="number" class="hour"> :
-                                    <input name="minus" type="number" class="minus"> :
-                                    <input name="second" type="number" class="second">
+                                    <input name="hour" type="number" value="0" class="hour"> :
+                                    <input name="minus" type="number" value="0" class="minus"> :
+                                    <input name="second" type="number" value="0" class="second">
                                 </div>
                                 <div class="numberQuestionContent">
                                     <label for="numberQuestion">Number Question: ${numberQuestion}</label>
@@ -134,15 +94,13 @@
                         </div>
                         <div class="description">
                             <label for="descriptionSection">Description:</label><br>
-
                             <textarea id="descriptionSection" name="description" rows="6" cols="133">
-
                             </textarea>
                         </div>
 
                         <div class="buttonSection">
                             <button class="btn btn-primary" type="submit">Submit</button>
-                            <button class="btn btn-secondary" type="button"><a class="listQuestion" style="color: white; " href="AdminQuizController">Cancel</a></button>
+                            <button class="btn btn-secondary" type="reset">Reset</button>
                         </div>
                     </form>
 

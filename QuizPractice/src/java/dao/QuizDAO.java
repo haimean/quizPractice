@@ -11,11 +11,11 @@ package dao;
 
 import context.DBContext;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Time;
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import model.*;
 
@@ -28,11 +28,7 @@ public class QuizDAO {
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
-    
-    public static void main(String[] args) {
-        QuizDAO dao = new QuizDAO();
-        System.out.println(dao.getAllQuizzesByUserId(3));
-    }
+    Timestamp ts = Timestamp.from(Instant.now());
 
     public Quiz getQuizByQuizId(int quizId) {
         String query = "select * from Quiz where quizId = ?";
@@ -43,7 +39,15 @@ public class QuizDAO {
             ps.setInt(1, quizId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Quiz quiz = new Quiz(quizId, rs.getString(2), rs.getInt(3), rs.getString(4), rs.getTime(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getDate(10));
+                Quiz quiz = new Quiz(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                        rs.getDate(8));
                 return quiz;
             }
         } catch (Exception e) {
@@ -53,10 +57,7 @@ public class QuizDAO {
     }
 
     public ArrayList<Quiz> getListLastFourQuiz() {
-        String query = "select top 3 q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join [user] as u on q.ownerId=u.userId\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
+        String query = "select top 3 q.*,s.subjectName from Quiz as q\n"
                 + "left outer join [Subject] as s\n"
                 + "on s.subjectId = q.subjectId\n"
                 + "order by quizId desc";
@@ -66,19 +67,17 @@ public class QuizDAO {
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
+                Quiz quiz = new Quiz(
+                        rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9)
+                );
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -102,40 +101,39 @@ public class QuizDAO {
         return 0;
     }
 
-    public int numberOfPages() {
+    public int numberOfPages(int perPage) {
         int count = getTotalQuiz();
-        if (count % 9 != 0) {
-            return ((count / 9) + 1);
+        if (count % perPage != 0) {
+            return ((count / perPage) + 1);
         } else {
             return count;
         }
     }
 
-    public ArrayList<Quiz> getAllQuiz(int index) {
-        String query = "select q.* , u.userName , s.subjectName from Quiz as q\n"
-                + "left outer join [User] as u on q.ownerId = u.userId\n"
+    public ArrayList<Quiz> getAll(int page, int perPage) {
+        String query = "select q.* , s.subjectName from Quiz as q\n"
                 + "left outer join Subject as s on  q.subjectId = s.subjectId\n"
                 + "order by quizId desc\n"
-                + "OFFSET ? ROWS FETCH NEXT 9 ROWS ONLY";
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         ArrayList<Quiz> listQuiz = new ArrayList<>();
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
-            ps.setInt(1, (index - 1) * 9);
+            ps.setInt(1, (page - 1) * perPage);
+            ps.setInt(2, perPage);
+
             rs = ps.executeQuery();
             while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
+                Quiz quiz = new Quiz(
+                        rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -144,9 +142,8 @@ public class QuizDAO {
         return listQuiz;
     }
 
-    public ArrayList<Quiz> getAllQuizBySubject(String subjectID) {
-        String query = "select q.* , u.userName , s.subjectName from Quiz as q\n"
-                + "left outer join [User] as u on q.ownerId = u.userId\n"
+    public ArrayList<Quiz> getAllBySubject(int subjectID) {
+        String query = "select q.* , s.subjectName from Quiz as q\n"
                 + "left outer join Subject as s on  q.subjectId = s.subjectId\n"
                 + "where q.subjectId = ?\n"
                 + "order by quizId desc";
@@ -154,21 +151,19 @@ public class QuizDAO {
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
-            ps.setString(1, subjectID);
+            ps.setInt(1, subjectID);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
+                Quiz quiz = new Quiz(
+                        rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -177,143 +172,61 @@ public class QuizDAO {
         return listQuiz;
     }
 
-    public ArrayList<Quiz> getAllQuizByLevel(String quizLevelId) {
-        String query = "select q.* , u.userName , s.subjectName from Quiz as q\n"
-                + "left outer join [User] as u on q.ownerId = u.userId\n"
-                + "left outer join [Subject] as s on  q.subjectId = s.subjectId\n"
-                + "where q.quizLevelId  = ?\n"
-                + "order by quizId desc";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setString(1, quizLevelId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public Quiz getQuizByID(String id) {
-        String query = "select q.* , u.userName , ql.quizLevelName , s.subjectName from Quiz as q\n"
-                + "left outer join [User] as u on q.ownerId = u.userId\n"
+    public Quiz get(int id) {
+        String query = "select q.* , s.subjectName from Quiz as q\n"
                 + "left outer join Subject as s on q.subjectId = s.subjectId\n"
-                + "left outer join [QuizLevel] as ql on  q.quizLevelId = ql.quizLevelId\n"
                 + "where q.quizId = ?";
 
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
-            ps.setString(1, id);
+            ps.setInt(1, id);
             rs = ps.executeQuery();
             while (rs.next()) {
                 return new Quiz(rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
-
-    public ArrayList<Quiz> getAllQuizByOwnerId(int ownerId) {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
-                + "where q.ownerId = ?";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, ownerId);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public void setNewQuiz(String quizName, int userId, Time quizDuration, int subjectId, int quizLevelId, String description, Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String day = formatter.format(date);
+    
+    public boolean add(String quizName, Time quizDuration, int subjectId, String description) {
         String query = "INSERT INTO [dbo].[Quiz]\n"
                 + "           ([quizName]\n"
-                + "           ,[ownerId]\n"
                 + "           ,[quizDuration]\n"
                 + "           ,[numberQuestion]\n"
                 + "           ,[subjectId]\n"
-                + "           ,[quizLevelId]\n"
                 + "           ,[description]\n"
-                + "           ,[dateCreated])\n"
-                + "     VALUES (?,?,?,?,?,?,?,?)";
+                + "           ,[dateCreated],[thumbnail])\n"
+                + "     VALUES (?,?,?,?,?,?,?)";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
             ps.setString(1, quizName);
-            ps.setInt(2, userId);
-            ps.setTime(3, quizDuration);
-            ps.setInt(4, 0);
-            ps.setInt(5, subjectId);
-            ps.setInt(6, quizLevelId);
-            ps.setString(7, description);
-            ps.setString(8, day);
+            ps.setTime(2, quizDuration);
+            ps.setInt(3, 0);
+            ps.setInt(4, subjectId);
+            ps.setString(5, description);
+            ps.setTimestamp(6, ts);
+            ps.setString(7, "");
             ps.execute();
-
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
-    public void deleteQuizByQuizId(int quizId) {
+    public void delete(int quizId) {
         String query = "DELETE FROM [dbo].[Quiz]\n"
                 + "      WHERE quizId = ?";
         try {
@@ -327,16 +240,39 @@ public class QuizDAO {
         }
     }
 
-    public void updateQuiz(int quizId, String quizName, Time quizDuration, int subjectId, int quizLevelId, String description, Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String day = formatter.format(date);
+    public ArrayList<Quiz> getAll() {
+        String query = "select q.*,s.subjectName from Quiz as q\n"
+                + "left outer join [Subject] as s\n"
+                + "on s.subjectId = q.subjectId\n";
+        ArrayList<Quiz> listQuiz = new ArrayList<>();
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Quiz quiz = new Quiz(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
+                listQuiz.add(quiz);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return listQuiz;
+    }
+
+    public boolean updateQuiz(int quizId, String quizName, Time quizDuration, int subjectId, String description) {
         String query = "UPDATE [dbo].[Quiz]\n"
                 + "   SET [quizName] = ?\n"
                 + "      ,[quizDuration] = ?\n"
                 + "      ,[subjectId] = ?\n"
-                + "      ,[quizLevelId] = ?\n"
                 + "      ,[description] =?\n"
-                + "      ,[dateCreated] = ?\n"
                 + " WHERE [quizId] = ?";
         try {
             con = new DBContext().getConnection();
@@ -344,242 +280,20 @@ public class QuizDAO {
             ps.setString(1, quizName);
             ps.setTime(2, quizDuration);
             ps.setInt(3, subjectId);
-            ps.setInt(4, quizLevelId);
-            ps.setString(5, description);
-            ps.setString(6, day);
-            ps.setInt(7, quizId);
+            ps.setString(4, description);
+            ps.setInt(5, quizId);
             ps.execute();
-
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public ArrayList<Quiz> getAllQuizByOwnerIdAndSortName(int ownerId) {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
-                + "where q.ownerId = ? order by q.quizName ";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, ownerId);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public ArrayList<Quiz> getAllQuizByOwnerIdAndSortNumberQuestion(int ownerId) {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
-                + "where q.ownerId = ?  order by q.numberQuestion ";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, ownerId);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public ArrayList<Quiz> getAllQuizByOwnerIdAndSortDuration(int ownerId) {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
-                + "where q.ownerId = ? order by q.quizDuration ";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, ownerId);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public ArrayList<Quiz> getAllQuiz() {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
-    }
-
-    public void updateQuiz(int quizId, int ownerId, String quizName, Time quizDuration, int subjectId, int quizLevelId, String description, Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String day = formatter.format(date);
-        String query = "UPDATE [dbo].[Quiz]\n"
-                + "   SET [quizName] = ?\n"
-                + "      ,[quizDuration] = ?\n"
-                + "      ,[subjectId] = ?\n"
-                + "      ,[quizLevelId] = ?\n"
-                + "      ,[description] =?\n"
-                + "      ,[dateCreated] = ?\n"
-                + "       ,[ownerId]=?\n"
-                + " WHERE [quizId] = ?";
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setString(1, quizName);
-            ps.setTime(2, quizDuration);
-            ps.setInt(3, subjectId);
-            ps.setInt(4, quizLevelId);
-            ps.setString(5, description);
-            ps.setString(6, day);
-            ps.setInt(7, ownerId);
-            ps.setInt(8, quizId);
-
-            ps.execute();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public ArrayList<Quiz> getAllQuizSortName() {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
-                + "left outer join [Subject] as s\n"
-                + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
-                + " order by q.quizName ";
-        ArrayList<Quiz> listQuiz = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
-                        rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
-                listQuiz.add(quiz);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return listQuiz;
+        return false;
     }
 
     public ArrayList<Quiz> getAllQuizSortNumberQuestion() {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
+        String query = "select q.*, s.subjectName from Quiz as q\n"
                 + "left outer join [Subject] as s\n"
                 + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
                 + "  order by q.numberQuestion ";
         ArrayList<Quiz> listQuiz = new ArrayList<>();
         try {
@@ -590,17 +304,13 @@ public class QuizDAO {
             while (rs.next()) {
                 Quiz quiz = new Quiz(rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -610,13 +320,9 @@ public class QuizDAO {
     }
 
     public ArrayList<Quiz> getAllQuizSortDuration() {
-        String query = "select q.*,u.userName,ql.quizLevelName,s.subjectName from Quiz as q\n"
-                + "left outer join QuizLevel as ql\n"
-                + "on ql.quizLevelId=q.quizLevelId\n"
+        String query = "select q.*, s.subjectName from Quiz as q\n"
                 + "left outer join [Subject] as s\n"
                 + "on s.subjectId = q.subjectId\n"
-                + "left outer join [User] as u\n"
-                + "on u.userId = q.ownerId\n"
                 + "order by q.quizDuration ";
         ArrayList<Quiz> listQuiz = new ArrayList<>();
         try {
@@ -627,17 +333,13 @@ public class QuizDAO {
             while (rs.next()) {
                 Quiz quiz = new Quiz(rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12),
-                        rs.getString(13));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -646,32 +348,29 @@ public class QuizDAO {
         return listQuiz;
     }
 
-    public ArrayList<Quiz> getQuizByQuizName(int index, String search) {
-        String query = "select q.* , u.userName , s.subjectName from (select * from Quiz where quizName like ?) as q\n"
-                + "                left outer join [User] as u on q.ownerId = u.userId\n"
-                + "                left outer join Subject as s on  q.subjectId = s.subjectId\n"
-                + "                order by quizId desc\n"
-                + "                OFFSET ? ROWS FETCH NEXT 9 ROWS ONLY";
+    public ArrayList<Quiz> getBySubject(int page, int perPage, int subjectId) {
+        String query = "select q.*, s.subjectName from (select * from Quiz where subjectId = ?) as q\n"
+                + "left outer join Subject as s on  q.subjectId = s.subjectId\n"
+                + "order by quizId desc\n"
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         ArrayList<Quiz> listQuiz = new ArrayList<>();
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(query);
-            ps.setString(1, "%" + search + "%");
-            ps.setInt(2, (index - 1) * 9);
+            ps.setInt(1, subjectId);
+            ps.setInt(2, (page - 1) * perPage);
+            ps.setInt(3, perPage);
             rs = ps.executeQuery();
             while (rs.next()) {
                 Quiz quiz = new Quiz(rs.getInt(1),
                         rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getTime(5),
+                        rs.getString(3),
+                        rs.getTime(4),
+                        rs.getInt(5),
                         rs.getInt(6),
-                        rs.getInt(7),
-                        rs.getInt(8),
-                        rs.getString(9),
-                        rs.getDate(10),
-                        rs.getString(11),
-                        rs.getString(12));
+                        rs.getString(7),
+                        rs.getDate(8),
+                        rs.getString(9));
                 listQuiz.add(quiz);
             }
         } catch (Exception e) {
@@ -679,36 +378,4 @@ public class QuizDAO {
         }
         return listQuiz;
     }
-
-    public ArrayList<Quiz> getAllQuizzesByUserId(int userId) {
-        String query = "SELECT [quizId]\n"
-                + "      ,[quizName]\n"
-                + "      ,[ownerId]\n"
-                + "      ,[thumbnail]\n"
-                + "      ,[quizDuration]\n"
-                + "      ,[numberQuestion]\n"
-                + "      ,[subjectId]\n"
-                + "      ,[quizLevelId]\n"
-                + "      ,[description]\n"
-                + "      ,[dateCreated]\n"
-                + "  FROM [dbo].[Quiz]\n"
-                + "  WHERE ownerId = ?";
-        ArrayList<Quiz> list = new ArrayList<>();
-        try {
-            con = new DBContext().getConnection();
-            ps = con.prepareStatement(query);
-            ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Quiz quiz = new Quiz(rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getString(4),
-                        rs.getTime(5),rs.getInt(6),rs.getInt(7),rs.getInt(8),rs.getString(9),
-                        rs.getDate(10));
-                list.add(quiz);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
 }
