@@ -7,13 +7,13 @@ package controller;
 
 import dao.QuizDAO;
 import dao.SubjectDAO;
-import java.io.IOException;
-import java.sql.Time;
-import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Time;
+import java.util.ArrayList;
 import model.Quiz;
 import model.Subject;
 
@@ -33,20 +33,25 @@ public class ControllerAdminQuizUpdate extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         QuizDAO quizDao = new QuizDAO();
         SubjectDAO subjectDao = new SubjectDAO();
         ArrayList<Subject> listS = subjectDao.getAllSubjcet();
         request.setAttribute("listSubject", listS);
-        int quizId = request.getParameter("quizId") != null ? Integer.parseInt(request.getParameter("quizId")) : 0;
+        int quizId = request.getParameter("quizId") != null
+                ? Integer.parseInt(request.getParameter("quizId"))
+                : 0;
         Quiz quiz = quizDao.get(quizId);
         request.setAttribute("quiz", quiz);
         request.setAttribute("hour", quiz.getQuizDuration().getHours());
         request.setAttribute("minus", quiz.getQuizDuration().getMinutes());
         request.setAttribute("second", quiz.getQuizDuration().getSeconds());
-        request.getRequestDispatcher("/view/admin/quiz/adminQuizUpdate.jsp").forward(request, response);
-
+        request
+                .getRequestDispatcher("/view/admin/quiz/adminQuizUpdate.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -58,14 +63,24 @@ public class ControllerAdminQuizUpdate extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         SubjectDAO subjectDao = new SubjectDAO();
         String name = request.getParameter("name").trim();
-        int subjectId = request.getParameter("subjectId") != null ? Integer.parseInt(request.getParameter("subjectId")) : 0;
-        int hour = request.getParameter("hour") != null ? Integer.parseInt(request.getParameter("hour")) : 0;
-        int minus = request.getParameter("minus") != null ? Integer.parseInt(request.getParameter("minus")) : 0;
-        int second = request.getParameter("second") != null ? Integer.parseInt(request.getParameter("second")) : 0;
+        int subjectId = request.getParameter("subjectId") != null
+                ? Integer.parseInt(request.getParameter("subjectId"))
+                : 0;
+        int hour = request.getParameter("hour") != null
+                ? Integer.parseInt(request.getParameter("hour"))
+                : 0;
+        int minus = request.getParameter("minus") != null
+                ? Integer.parseInt(request.getParameter("minus"))
+                : 0;
+        int second = request.getParameter("second") != null
+                ? Integer.parseInt(request.getParameter("second"))
+                : 0;
         Time quizDuration = new Time(hour, minus, second);
         String description = request.getParameter("description").trim();
         int quizId = Integer.parseInt(request.getParameter("quizId"));
@@ -87,8 +102,9 @@ public class ControllerAdminQuizUpdate extends HttpServlet {
             ArrayList<Subject> subjects = subjectDao.getAllSubjcet();
             request.setAttribute("listSubject", subjects);
             request.setAttribute("numberQuestion", 0);
-            request.getRequestDispatcher("/view/admin/quiz/adminQuizUpdate.jsp").forward(request, response);
+            request
+                    .getRequestDispatcher("/view/admin/quiz/adminQuizUpdate.jsp")
+                    .forward(request, response);
         }
     }
-
 }

@@ -7,14 +7,15 @@ package controller;
 
 import dao.OptionDAO;
 import dao.QuestionDAO;
-import dao.QuizDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import model.Option;
+import model.Question;
 
 /**
  *
@@ -31,48 +32,49 @@ public class ControllerAdminQuestionUpdate extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
+        String questionId = request.getParameter("updateId");
+
         QuestionDAO question = new QuestionDAO();
-        OptionDAO op = new OptionDAO();
-
-        String nameQuesttion = request.getParameter("nameQuestion");
-        String explanation = request.getParameter("exp");
-        String media = request.getParameter("media");
-        String oldMedia = request.getParameter("mediaa");
-
-        String[] option = {request.getParameter("option1"), request.getParameter("option2"), request.getParameter("option3"),
-            request.getParameter("option4")};
-
-        String correctAnswer = request.getParameter("correctA");
-        int selectCorrectAnswer = Integer.parseInt(correctAnswer);
+        OptionDAO option = new OptionDAO();
 
         HttpSession session = request.getSession();
-        String opId = session.getAttribute("opId").toString();
-        String questionId = session.getAttribute("questionId").toString();
-        int opIdd = Integer.parseInt(opId);
+        String quizId = session.getAttribute("quizID").toString();
+        Question q = question.getQuestion(quizId, questionId);
+        ArrayList<Option> optionById = option.getListOptionByID(quizId, questionId);
 
-        if (media.length() == 0 && oldMedia.length() == 0) {
-            question.updateQuestion(questionId, nameQuesttion, null, explanation);
-        } else if (media.length() == 0) {
-            question.updateQuestion(questionId, nameQuesttion, oldMedia, explanation);
-        } else {
-            question.updateQuestion(questionId, nameQuesttion, media, explanation);
-        }
-
-        for (int i = 0; i <= option.length - 1; i++) {
-            if (i == (selectCorrectAnswer - 1)) {
-                op.updateOption(questionId, opIdd, option[i], "True");
-            } else {
-                op.updateOption(questionId, opIdd, option[i], "False");
+        String content = q.getContent();
+        String explannation = q.getExplanation();
+        String img = q.getMedia();
+        int i;
+        for (i = 0; i < optionById.size() - 1; i++) {
+            if (optionById.get(i).isIsCorrect() == true) {
+                break;
             }
-            opIdd++;
         }
 
-        response.sendRedirect("ManagerQuestion");
+        session.setAttribute("opId", optionById.get(0).getOptionId());
+        session.setAttribute("questionId", questionId);
+        //        request.setAttribute("id", questionId);
+        request.setAttribute("Question", content);
+        request.setAttribute("explanation", explannation);
+        request.setAttribute("img", img);
+        request.setAttribute("op1", optionById.get(0).getContent());
+        request.setAttribute("op2", optionById.get(1).getContent());
+        request.setAttribute("op3", optionById.get(2).getContent());
+        request.setAttribute("op4", optionById.get(3).getContent());
+        request.setAttribute("answerCorrect", i + 1);
+        request.setAttribute("optionId", optionById);
+
+        request
+                .getRequestDispatcher("view/editQuestion.jsp")
+                .forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -85,8 +87,10 @@ public class ControllerAdminQuestionUpdate extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -99,8 +103,10 @@ public class ControllerAdminQuestionUpdate extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -112,6 +118,5 @@ public class ControllerAdminQuestionUpdate extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    } // </editor-fold>
 }

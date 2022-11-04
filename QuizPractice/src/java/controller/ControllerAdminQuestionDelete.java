@@ -8,19 +8,17 @@ package controller;
 import dao.OptionDAO;
 import dao.QuestionDAO;
 import dao.StudentWorkDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  *
  * @author nguye
  */
-public class deleteQuestionAdminController extends HttpServlet {
+public class ControllerAdminQuestionDelete extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,43 +29,32 @@ public class deleteQuestionAdminController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-
-//        String index = session.getAttribute("index").toString();
-//        if(index == null){
-//            index = "1";
-//        }
         String deleteId = request.getParameter("deleteId");
-        String quizID = request.getParameter("quizID");
-        String index = request.getParameter("indexP");
 
         QuestionDAO q = new QuestionDAO();
         OptionDAO op = new OptionDAO();
         StudentWorkDAO std = new StudentWorkDAO();
 
-        std.deleteStudentWorkByQuestionId(deleteId);
         op.deleteOptionById(deleteId);
+        std.deleteStudentWorkByQuestionId(deleteId);
         q.deleteQuestionById(deleteId);
 
-//        String QuizId = q.getQuizId(deleteId);
-        int numberQ = q.getTotalQuestion(quizID);
-        q.updateNumberQuestion(numberQ, quizID);
+        int quizId = request.getSession().getAttribute("quizID").toString() != null
+                ? Integer.parseInt(request.getSession().getAttribute("quizID").toString())
+                : 0;
+        int numberQ = q.getTotalQuestion(quizId);
+        q.updateNumberQuestion(numberQ, quizId);
 
-        String status = session.getAttribute("status").toString();
-        if (status == "admin") {
-            response.sendRedirect("ManagermentQuestion?index=" + index);
-        } else if (status == "search") {
-            response.sendRedirect("searchQuestion?index=" + index);
-        } else if (status == "filter") {
-            response.sendRedirect("FilterQuestion");
-        }
-
+        response.sendRedirect("ManagerQuestion");
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -77,8 +64,10 @@ public class deleteQuestionAdminController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -91,8 +80,10 @@ public class deleteQuestionAdminController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -104,6 +95,5 @@ public class deleteQuestionAdminController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    } // </editor-fold>
 }

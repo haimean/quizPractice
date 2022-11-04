@@ -106,7 +106,7 @@
     </servlet>
     <servlet>
         <servlet-name>deleteQuestionController</servlet-name>
-        <servlet-class>controller.deleteQuestionController</servlet-class>
+        <servlet-class>controller.ControllerAdminQuestionDelete</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManagementUserController</servlet-name>
@@ -117,12 +117,12 @@
         <servlet-class>controller.ManagementUserAddController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>inforQuestionToEditController</servlet-name>
-        <servlet-class>controller.inforQuestionToEditController</servlet-class>
+        <servlet-name>ControllerAdminQuestionUpdate</servlet-name>
+        <servlet-class>controller.ControllerAdminQuestionUpdate</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateQuestionController</servlet-name>
-        <servlet-class>controller.ControllerAdminQuestionUpdate</servlet-class>
+        <servlet-class>controller.ControllerAdminQuestionUpdatef</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SearchQuizController</servlet-name>
@@ -137,7 +137,7 @@
         <servlet-class>controller.BlockUserController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminAddQuestionController</servlet-name>
+        <servlet-name>ControllerAdminQuestionAdd</servlet-name>
         <servlet-class>controller.ControllerAdminQuestionAdd</servlet-class>
     </servlet>
     <servlet>
@@ -153,8 +153,8 @@
         <servlet-class>controller.UpdateQuestionAdminController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>deleteQuestionAdminController</servlet-name>
-        <servlet-class>controller.deleteQuestionAdminController</servlet-class>
+        <servlet-name>ControllerAdminQuestionDelete</servlet-name>
+        <servlet-class>controller.ControllerAdminQuestionDelete</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>inforQuestionOfExpertController</servlet-name>
@@ -281,8 +281,8 @@
         <url-pattern>/addQuestion</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>deleteQuestionController</servlet-name>
-        <url-pattern>/deleteQuestion</url-pattern>
+        <servlet-name>ControllerAdminQuestionDelete</servlet-name>
+        <url-pattern>/admin/question/delete</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ManagementUserController</servlet-name>
@@ -293,8 +293,8 @@
         <url-pattern>/addUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>inforQuestionToEditController</servlet-name>
-        <url-pattern>/inforQuestion</url-pattern>
+        <servlet-name>ControllerAdminQuestionUpdate</servlet-name>
+        <url-pattern>/admin/question/update</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateQuestionController</servlet-name>
@@ -313,8 +313,8 @@
         <url-pattern>/blockUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminAddQuestionController</servlet-name>
-        <url-pattern>/AdminAddQuestion</url-pattern>
+        <servlet-name>ControllerAdminQuestionAdd</servlet-name>
+        <url-pattern>/admin/question/add</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FilterQuestionByQuizIdController</servlet-name>

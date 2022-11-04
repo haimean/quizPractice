@@ -172,12 +172,12 @@ public class QuestionDAO {
         }
     }
 
-    public int getTotalQuestion(String id) {
+    public int getTotalQuestion(int id) {
         String sql = "select COUNT (*) from Question where quizId = ?";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(sql);
-            ps.setString(1, id);
+            ps.setInt(1, id);
             rs = ps.executeQuery();
             while (rs.next()) {
                 return rs.getInt(1);
@@ -188,7 +188,7 @@ public class QuestionDAO {
         return 0;
     }
 
-    public void updateNumberQuestion(int numberQuestion, String quizId) {
+    public void updateNumberQuestion(int numberQuestion, int quizId) {
         String sql = "update [dbo].[Quiz]\n"
                 + "set [numberQuestion] = ? \n"
                 + "where quizId = ?";
@@ -196,7 +196,7 @@ public class QuestionDAO {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, numberQuestion);
-            ps.setString(2, quizId);
+            ps.setInt(2, quizId);
             ps.executeQuery();
         } catch (Exception e) {
             System.out.println(e.getMessage());

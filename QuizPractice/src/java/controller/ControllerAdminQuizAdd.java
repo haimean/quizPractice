@@ -6,14 +6,14 @@
 package controller;
 
 import dao.*;
-import model.*;
-import java.io.IOException;
-import java.sql.Time;
-import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Time;
+import java.util.ArrayList;
+import model.*;
 
 /**
  *
@@ -31,13 +31,17 @@ public class ControllerAdminQuizAdd extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         SubjectDAO subjectDao = new SubjectDAO();
         ArrayList<Subject> subjects = subjectDao.getAllSubjcet();
         request.setAttribute("subjects", subjects);
         request.setAttribute("numberQuestion", 0);
-        request.getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp").forward(request, response);
+        request
+                .getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -49,16 +53,26 @@ public class ControllerAdminQuizAdd extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         SubjectDAO subjectDao = new SubjectDAO();
         QuizDAO quizDao = new QuizDAO();
         String name = request.getParameter("name").trim();
         if (name != null) {
-            int subjectId = request.getParameter("subjectId") != null ? Integer.parseInt(request.getParameter("subjectId")) : 0;
-            int hour = request.getParameter("hour") != null ? Integer.parseInt(request.getParameter("hour")) : 0;
-            int minus = request.getParameter("minus") != null ? Integer.parseInt(request.getParameter("minus")) : 0;
-            int second = request.getParameter("second") != null ? Integer.parseInt(request.getParameter("second")) : 0;
+            int subjectId = request.getParameter("subjectId") != null
+                    ? Integer.parseInt(request.getParameter("subjectId"))
+                    : 0;
+            int hour = request.getParameter("hour") != null
+                    ? Integer.parseInt(request.getParameter("hour"))
+                    : 0;
+            int minus = request.getParameter("minus") != null
+                    ? Integer.parseInt(request.getParameter("minus"))
+                    : 0;
+            int second = request.getParameter("second") != null
+                    ? Integer.parseInt(request.getParameter("second"))
+                    : 0;
             Time quizDuration = new Time(hour, minus, second);
             String description = request.getParameter("description").trim();
             if (quizDao.add(name, quizDuration, subjectId, description)) {
@@ -69,7 +83,9 @@ public class ControllerAdminQuizAdd extends HttpServlet {
                 ArrayList<Subject> subjects = subjectDao.getAllSubjcet();
                 request.setAttribute("subjects", subjects);
                 request.setAttribute("numberQuestion", 0);
-                request.getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp").forward(request, response);
+                request
+                        .getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp")
+                        .forward(request, response);
             }
         } else {
             request.setAttribute("mess", "Quiz name not empty!");
@@ -77,9 +93,9 @@ public class ControllerAdminQuizAdd extends HttpServlet {
             ArrayList<Subject> subjects = subjectDao.getAllSubjcet();
             request.setAttribute("subjects", subjects);
             request.setAttribute("numberQuestion", 0);
-            request.getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp").forward(request, response);
+            request
+                    .getRequestDispatcher("/view/admin/quiz/adminQuizAdd.jsp")
+                    .forward(request, response);
         }
-
     }
-
 }
