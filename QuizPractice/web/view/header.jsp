@@ -128,7 +128,7 @@
                                 </c:if>
                                 <c:if test="${sessionScope.user.roleId == 1}">
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="managementUser">Manage</a>
+                                    <a class="dropdown-item" href="admin/quiz">Manage</a>
                                 </c:if>
                                     <c:if test="${sessionScope.user.roleId == 2}">
                                     <div class="dropdown-divider"></div>

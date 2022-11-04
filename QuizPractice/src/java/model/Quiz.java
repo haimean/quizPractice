@@ -1,4 +1,4 @@
- /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -13,76 +13,40 @@ import java.sql.Time;
  * @author ASUS
  */
 public class Quiz {
-    
+
     private int quizId;
     private String quizName;
-    private int ownerId;
     private String thumbnail;
     private Time quizDuration;
     private int numberQuestion;
     private int subjectId;
-    private int quizLevelId;
     private String description;
     private Date dateCreated;
-    
     private String ownerName;
     private String quizLevelName;
     private String subjectName;
 
-    public Quiz(int quizId, String quizName, int ownerId, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, int quizLevelId, String description, Date dateCreated, String ownerName, String quizLevelName, String subjectName) {
-        this.quizId = quizId;
-        this.quizName = quizName;
-        this.ownerId = ownerId;
-        this.thumbnail = thumbnail;
-        this.quizDuration = quizDuration;
-        this.numberQuestion = numberQuestion;
-        this.subjectId = subjectId;
-        this.quizLevelId = quizLevelId;
-        this.description = description;
-        this.dateCreated = dateCreated;
-        this.ownerName = ownerName;
-        this.quizLevelName = quizLevelName;
-        this.subjectName = subjectName;
-    }
-
     public Quiz() {
     }
 
-    public Quiz(int quizId, String quizName, int ownerId, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, int quizLevelId, String description, Date dateCreated) {
+    public Quiz(int quizId, String quizName, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, String description, Date dateCreated) {
         this.quizId = quizId;
         this.quizName = quizName;
-        this.ownerId = ownerId;
         this.thumbnail = thumbnail;
         this.quizDuration = quizDuration;
         this.numberQuestion = numberQuestion;
         this.subjectId = subjectId;
-        this.quizLevelId = quizLevelId;
         this.description = description;
         this.dateCreated = dateCreated;
     }
 
-    public Quiz(int quizId, String quizName, int ownerId, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, int quizLevelId, String description, Date dateCreated, String ownerName) {
+    public Quiz(int quizId, String quizName, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, String description, Date dateCreated, String subjectName) {
         this.quizId = quizId;
         this.quizName = quizName;
-        this.ownerId = ownerId;
         this.thumbnail = thumbnail;
         this.quizDuration = quizDuration;
         this.numberQuestion = numberQuestion;
         this.subjectId = subjectId;
-        this.quizLevelId = quizLevelId;
-        this.description = description;
-        this.dateCreated = dateCreated;
-        this.ownerName = ownerName;
-    }
-       public Quiz(int quizId, String quizName, int ownerId, String thumbnail, Time quizDuration, int numberQuestion, int subjectId, int quizLevelId, String description, Date dateCreated, String ownerName, String subjectName) {
-        this.quizId = quizId;
-        this.quizName = quizName;
-        this.ownerId = ownerId;
-        this.thumbnail = thumbnail;
-        this.quizDuration = quizDuration;
-        this.numberQuestion = numberQuestion;
-        this.subjectId = subjectId;
-        this.quizLevelId = quizLevelId;
         this.description = description;
         this.dateCreated = dateCreated;
         this.ownerName = ownerName;
@@ -103,14 +67,6 @@ public class Quiz {
 
     public void setQuizName(String quizName) {
         this.quizName = quizName;
-    }
-
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
     }
 
     public String getThumbnail() {
@@ -145,14 +101,6 @@ public class Quiz {
         this.subjectId = subjectId;
     }
 
-    public int getQuizLevelId() {
-        return quizLevelId;
-    }
-
-    public void setQuizLevelId(int quizLevelId) {
-        this.quizLevelId = quizLevelId;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -168,7 +116,7 @@ public class Quiz {
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-    
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -192,7 +140,5 @@ public class Quiz {
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
     }
-    
- 
-    
+
 }

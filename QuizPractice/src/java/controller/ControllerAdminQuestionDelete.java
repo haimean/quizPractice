@@ -5,19 +5,20 @@
  */
 package controller;
 
-import dao.QuizDAO;
-import java.io.IOException;
+import dao.OptionDAO;
+import dao.QuestionDAO;
+import dao.StudentWorkDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Quiz;
+import java.io.IOException;
 
 /**
  *
  * @author nguye
  */
-public class QuizDetailController extends HttpServlet {
+public class ControllerAdminQuestionDelete extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -28,17 +29,32 @@ public class QuizDetailController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String id = request.getParameter("quizId");
-        QuizDAO dao = new QuizDAO();
-        Quiz quiz = dao.getQuizByID(id);
-        request.setAttribute("quizDetail", quiz);
-        request.getRequestDispatcher("view/quizDetail.jsp").forward(request, response);
+        String deleteId = request.getParameter("deleteId");
+
+        QuestionDAO q = new QuestionDAO();
+        OptionDAO op = new OptionDAO();
+        StudentWorkDAO std = new StudentWorkDAO();
+
+        op.deleteOptionById(deleteId);
+        std.deleteStudentWorkByQuestionId(deleteId);
+        q.deleteQuestionById(deleteId);
+
+        int quizId = request.getSession().getAttribute("quizID").toString() != null
+                ? Integer.parseInt(request.getSession().getAttribute("quizID").toString())
+                : 0;
+        int numberQ = q.getTotalQuestion(quizId);
+        q.updateNumberQuestion(numberQ, quizId);
+
+        response.sendRedirect("ManagerQuestion");
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -48,8 +64,10 @@ public class QuizDetailController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -62,8 +80,10 @@ public class QuizDetailController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -75,6 +95,5 @@ public class QuizDetailController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    } // </editor-fold>
 }

@@ -8,7 +8,6 @@ package controller;
 import dao.QuestionDAO;
 import dao.QuizDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -54,7 +53,7 @@ public class searchQuestionController extends HttpServlet {
         QuizDAO dao = new QuizDAO();
         QuestionDAO daoQuestion = new QuestionDAO();
 
-        ArrayList<Quiz> list = dao.getAllQuiz();
+        ArrayList<Quiz> list = dao.getAll();
         ArrayList<Question> listQuestion = daoQuestion.getAllSearchedQuestion(index, value);
 
         int countQuestionSearch = daoQuestion.countTotalQuestionSearched(value);

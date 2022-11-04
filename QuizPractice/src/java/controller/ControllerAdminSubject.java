@@ -5,22 +5,20 @@
  */
 package controller;
 
-import dao.QuizDAO;
-import dao.SubjectDAO;
+import dao.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Quiz;
-import model.Subject;
+import model.*;
 
 /**
  *
- * @author nguye
+ * @author DELL
  */
-public class FilterQuizBySubjectController extends HttpServlet {
+public class ControllerAdminSubject extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -34,15 +32,13 @@ public class FilterQuizBySubjectController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String subjectID = request.getParameter("subjectID");
-        QuizDAO quiz = new QuizDAO();
-        SubjectDAO dao = new SubjectDAO();
-        ArrayList<Subject> listS = dao.getAllSubjcet();
-        ArrayList<Quiz> list = quiz.getAllQuizBySubject(subjectID);
-        request.setAttribute("lisQuiz", list);
-        request.setAttribute("listSubject", listS);
-        request.setAttribute("tag", subjectID);
-        request.getRequestDispatcher("view/quizList.jsp").forward(request, response);
+        SubjectDAO subjectDao = new SubjectDAO();
+        ArrayList<Subject> listSubjet = subjectDao.getAllSubjcet();
+        for (Subject subject : listSubjet) {
+            subject.setImage(request.getContextPath() + "/img/" + subject.getImage());
+        }
+        request.setAttribute("adminSubject", listSubjet);
+        request.getRequestDispatcher("/view/admin/subject/adminSubject.jsp").forward(request, response);
     }
 
 }

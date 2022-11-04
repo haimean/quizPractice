@@ -1,0 +1,19 @@
+{
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "QuizPractice\\given\\jakarta.servlet.jsp.jstl-2.0.0.jar",
+    "QuizPractice\\given\\jakarta.servlet.jsp.jstl-api-2.0.0.jar",
+    "QuizPractice\\given\\sqljdbc42.jar",
+    "c:\\Users\\haimi\\Downloads\\jakarta.servlet-api-5.0.0.jar"
+  ],
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "cSpell.autoFormatConfigFile": false,
+  "cSpell.words": [
+    "ASUS",
+    "defaultstate",
+    "explannation",
+    "nguye",
+    "servlet"
+  ]
+}

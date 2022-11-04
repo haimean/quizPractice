@@ -72,7 +72,7 @@ public class LoginController extends HttpServlet {
                     request.getRequestDispatcher("view/login.jsp").forward(request, response);
                 } else {
                     session.setAttribute("user", dao.getUserByEmail(email));
-                    response.sendRedirect("home");
+                    response.sendRedirect("admin/subject");
                 }
             }
         }

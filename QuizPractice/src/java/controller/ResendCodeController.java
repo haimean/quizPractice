@@ -5,15 +5,12 @@
  */
 package controller;
 
-import dao.UserDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.User;
 //import smtp.Email;
 
 /**
@@ -45,7 +42,7 @@ public class ResendCodeController extends HttpServlet {
 //        //Update new code
 //        dao.updateCode(code, email);
 //        response.sendRedirect("verify");
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -75,7 +72,7 @@ public class ResendCodeController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-        
+
     }
 
     /**
